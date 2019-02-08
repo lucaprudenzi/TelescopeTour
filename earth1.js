@@ -132,7 +132,10 @@ function init() {
     camera.position.set(-300, 0, -300);
 	  camera.lookAt(new THREE.Vector3(0, 0, 0));
     
-    camera_control = new THREE.OrbitControls(camera);
+    camera_control = new THREE.OrbitControls(camera, renderer.domElement);
+		controls.enableDamping = true;
+		controls.dampingFactor = 0.25;
+		controls.screenSpacePanning = false;
     camera_control.minDistance = 120;
 	  camera_control.maxDistance = 1000;
     camera_control.rotateSpeed = 1.0;
