@@ -1,6 +1,7 @@
 var renderer, scene, camera, labelRenderer,capturer;
 var sphere, pivot, group, pano, light, cloud;
 var clock = new THREE.Clock();
+var textureLoader = new THREE.TextureLoader();
 
 var points=[];
 var array_image = [];
@@ -8,9 +9,15 @@ var array_label = [];
 var array_label_position_up = [];
 var array_label_position_down = [];
 var count = 0;
-var textureLoader = new THREE.TextureLoader();
+var radius = 100;
+var i = 0;
 
-// Txt
+var dilatation = 10; //set to high value for ccpacture, 1 otherwise
+var velocity_first = dilatation*10000;
+var velocity = dilatation*3000;
+var capture_on = 1; // 1 for capture, 0 otherwise
+
+// data
 var long=[-174-39/60-46/3600,
 -149-33/60-53/3600,
 -149-5/60-58/3600,
@@ -27,6 +34,7 @@ var long=[-174-39/60-46/3600,
 -11-55/60-4/3600,
 -6-35/60-38/3600,
 -6-53/60-1/3600,
+-6-23/60-46/3600,
 2+18/60+14/3600,
 -11-38/60-49/3600,
 -14-59/60-20/3600,
@@ -60,6 +68,7 @@ var lat=[-36-25/60-59.4/3600,
 57+23/60+35.1/3600,
 52+54/60+55.1/3600,
 50+31/60+29.4/3600,
+52+48/60+43/3600,
 53+14/60+2.3/3600,
 44+31/60+13.8/3600,
 36+52/60+33.8/3600,
@@ -93,6 +102,7 @@ var telescope=["Warkworth Astronomical Observatory",
 "Onsala Space Observatory",
 "Westerbork Radio Telescope",
 "Effelsberg Radio Telescope",
+"Joint Institute for VLBI ERIC",
 "Mark II Radio Telescope",
 "Medicina Radio Telescope",
 "Noto Radio Observatory",
@@ -110,32 +120,32 @@ var telescope=["Warkworth Astronomical Observatory",
 "VLBA (Brewster)",
 "VLBA (Mauna Kea)"]
 
-// Costants
-var radius = 100;
-var i = 0;
+
 init();
 render();
 
 
 function init() {
-    capturer = new CCapture({ 
-        format: 'webm',
-        framerate: 60,
-    });
+    if (capture_on){
+			capturer = new CCapture({ 
+				  format: 'webm',
+					framerate: 45,
+			});
+		}
     
-	renderer = new THREE.WebGLRenderer();
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	  renderer = new THREE.WebGLRenderer();
+	  renderer.setSize(window.innerWidth, window.innerHeight);
     canvas = document.body.appendChild(renderer.domElement);
     
     scene = new THREE.Scene();
     
     camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 10000);
     camera.position.set(-300, 0, -300);
-	camera.lookAt(new THREE.Vector3(0, 0, 0));
+	  camera.lookAt(new THREE.Vector3(0, 0, 0));
     
     camera_control = new THREE.OrbitControls(camera);
     camera_control.minDistance = 100;
-	camera_control.maxDistance = 1500;
+	  camera_control.maxDistance = 1500;
     camera_control.rotateSpeed = 1.0;
     camera_control.zoomSpeed = 1.2;
     camera_control.panSpeed = 0.8;
@@ -150,7 +160,6 @@ function init() {
     });
     sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
-    
     
     cloud_geometry = new THREE.SphereGeometry(radius+1.5, 32, 32),
     cloud_material = new THREE.MeshPhongMaterial({
@@ -246,9 +255,11 @@ function init() {
     pivot = new THREE.Group();
     scene.add(pivot);
     pivot.add(group);
-    //capturer.start();
+    if (capture_on){
+			capturer.start();
+		}
     scene.add(array_image[0]);
-    tweenCamera(points[0],108000);
+    tweenCamera(points[0],velocity_first);
 
 }
 
@@ -270,7 +281,7 @@ function tweenCamera(target,duration){
         
         .onComplete( function () {
             count = count+1;
-            tweenCamera(points[count],84000)    
+            tweenCamera(points[count],velocity)    
             if (count<points.length){
                 array_label[count-1].set(array_label_position_down[count-1].x,array_label_position_down[count-1].y,array_label_position_down[count-1].z);
                 scene.remove(array_image[count-1]);
@@ -279,9 +290,11 @@ function tweenCamera(target,duration){
                     scene.add(array_image[count]);
                 }
             }
-            if (count == points.length+1){
-                //capturer.stop();
-                //capturer.save();
+            if (capture_on){
+							if (count == points.length+1){
+  							capturer.stop();
+								capturer.save();
+							}
             }
         })
         .delay(0)
@@ -354,15 +367,16 @@ function render() {
     //console.log(points.length)
     cloud.rotation.y += 0.0002;
     if (count>=points.length){
-        cloud.rotation.y += 0.001;
-        sphere.rotation.y += 0.002;
-        pivot.rotation.y += 0.002;
+        cloud.rotation.y += 0.0011;
+        sphere.rotation.y += 0.001;
+        pivot.rotation.y += 0.001;
     }
-    
     
     TWEEN.update();
     
     requestAnimationFrame(render);
     renderer.render(scene, camera);
-    //capturer.capture(canvas);
+    if (capture_on){
+			capturer.capture(canvas);
+		}
 }
