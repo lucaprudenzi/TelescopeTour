@@ -142,8 +142,8 @@ function init() {
     var geometry = new THREE.SphereGeometry(radius, 64, 64)
     var material = new THREE.MeshPhongMaterial({
         map: textureLoader.load('images/8k_earth.jpg'),
-        //bumpMap: textureLoader.load('images/elev_bump_4k.jpg'),
-        //bumpScale: 1,
+        bumpMap: textureLoader.load('images/elev_bump_4k.jpg'),
+        bumpScale: 1,
         specularMap: textureLoader.load('images/water_4k_tiny.png'),
         specular: new THREE.Color('grey')
     });
