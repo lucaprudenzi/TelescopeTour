@@ -141,10 +141,10 @@ function init() {
 
     var geometry = new THREE.SphereGeometry(radius, 64, 64)
     var material = new THREE.MeshPhongMaterial({
-        map: textureLoader.load('images/8k_earth.jpg'),
-        bumpMap: textureLoader.load('images/elev_bump_4k.jpg'),
+        map: textureLoader.load('images/8k_earth_tiny.jpg'),
+        //bumpMap: textureLoader.load('images/elev_bump_4k.jpg'),
         bumpScale: 1,
-        specularMap: textureLoader.load('images/water_4k.png'),
+        specularMap: textureLoader.load('images/water_4k_tiny.png'),
         specular: new THREE.Color('grey')
     });
     sphere = new THREE.Mesh(geometry, material);
@@ -152,7 +152,7 @@ function init() {
     
     cloud_geometry = new THREE.SphereGeometry(radius+1.5, 32, 32),
     cloud_material = new THREE.MeshPhongMaterial({
-        map: textureLoader.load('images/fair_clouds_4k.png'),
+        map: textureLoader.load('images/fair_clouds_4k_tiny.png'),
         transparent: true
     })
     cloud = new THREE.Mesh(cloud_geometry, cloud_material)
