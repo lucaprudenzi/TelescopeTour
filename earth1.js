@@ -234,8 +234,14 @@ function init() {
     pivot = new THREE.Group();
     scene.add(pivot);
     pivot.add(group);
-    
+    window.addEventListener( 'resize', onWindowResize, false );
 
+}
+
+function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function adjustLat(lat){
@@ -309,5 +315,6 @@ function render() {
     pivot.rotation.y += 0.000;
     
     requestAnimationFrame(render);
+		controls.update();
     renderer.render(scene, camera);
 }
