@@ -133,9 +133,9 @@ function init() {
 	  camera.lookAt(new THREE.Vector3(0, 0, 0));
     
     camera_control = new THREE.OrbitControls(camera, renderer.domElement);
-		controls.enableDamping = true;
-		controls.dampingFactor = 0.25;
-		controls.screenSpacePanning = false;
+		camera_control.enableDamping = true;
+		camera_control.dampingFactor = 0.25;
+		camera_control.screenSpacePanning = false;
     camera_control.minDistance = 120;
 	  camera_control.maxDistance = 1000;
     camera_control.rotateSpeed = 1.0;
@@ -309,12 +309,11 @@ function roundRect(ctx, x, y, w, h, r)
 }
 
 function render() {
-    camera_control.update();
     cloud.rotation.y += 0.0001;
     sphere.rotation.y += 0.000;
     pivot.rotation.y += 0.000;
     
     requestAnimationFrame(render);
-		controls.update();
+		camera_control.update();
     renderer.render(scene, camera);
 }
